@@ -1,7 +1,7 @@
 import { JsonDB } from 'node-json-db';
 import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
 
-const languages = { spanish: 'es', english: 'en', german: 'de' };
+const languages = { spanish: 'es', english: 'en', german: 'de' } as const;
 
 interface NewProject {
   name: string;
@@ -74,7 +74,7 @@ class database {
   }
 
   newProject(data: NewProject) {
-    type lang = 'es' | 'de' | 'en';
+    type lang = typeof languages[keyof typeof languages];
     const langs: Partial<Record<lang, Object>> = new Object();
     data.langs.forEach((lang: keyof typeof languages) => {
       const language = languages[lang] as lang;
