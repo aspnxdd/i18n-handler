@@ -64,7 +64,7 @@ export const Modal = ({ state:showModal, setState:setShowModal }: IUseState<bool
                     )
                       return alert("Fill the details");
                     setSending(true);
-                    window.Main.invoke("newproject", {
+                    window.Main.invoke("newProject", {
                       data: values,
                       
                     }).then(()=>{

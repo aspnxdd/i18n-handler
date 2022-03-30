@@ -8,22 +8,23 @@ class database {
     constructor() {
         this.db = new node_json_db_1.JsonDB(new JsonDBConfig_1.Config('db', true, false, '/'));
     }
-    add(id, data) {
+    add(id, data, lang) {
         const mainLang = this.db.getData(`/${id}/mainLang`);
-        const currentData = this.db.getData(`/${id}/data/${mainLang}`);
+        console.log("null", typeof lang, lang);
+        const currentData = typeof lang == 'string' ? this.db.getData(`/${id}/data/${lang}`) : this.db.getData(`/${id}/data/${mainLang}`);
         const key = Object.keys(data)[0];
         const value = Object.values(data);
-        return new Promise((res, rej) => {
-            if (currentData[key]) {
-                console.log('currentData[key]', currentData[key]);
-                return rej();
-            }
+        if (currentData[key]) {
+            console.log('currentData[key]', currentData[key]);
+            return false;
+        }
+        else {
             currentData[key] = value[0];
-            this.db.push(`/${id}/data/${mainLang}`, {
+            this.db.push(`/${id}/data/${typeof lang == 'string' ? lang : mainLang}`, {
                 ...currentData
             }, true);
-            return res();
-        });
+            return true;
+        }
     }
     updateContent(id, key, val, prevKey) {
         const mainLang = this.db.getData(`/${id}/mainLang`);
@@ -44,10 +45,10 @@ class database {
     }
     newProject(data) {
         const langs = new Object();
-        data.langs.forEach((lang) => {
+        for (const lang of data.langs) {
             const language = languages[lang];
             langs[language] = new Object();
-        });
+        }
         this.db.push(`/${data.name}/`, {
             mainLang: languages[data.mainLang],
             data: langs
@@ -64,8 +65,22 @@ class database {
     getMainLang(id) {
         return this.db.getData(`/${id}/mainLang`);
     }
-    getRes(id) {
+    getLangs(id) {
+        const data = this.db.getData(`/${id}/data`);
+        const langs = Object.keys(data);
+        // const langKeys = langs.map((lang)=>{
+        //   return Object.keys(languages).find((e )=> languages[e as langKeys]===lang);
+        // })
+        return langs;
+    }
+    getRes(id, anotherLang) {
+        if (anotherLang) {
+            return this.db.getData(`/${id}/data/${anotherLang}`);
+        }
         return this.db.getData(`/${id}/data/${this.getMainLang(id)}`);
+    }
+    exportProject(id) {
+        return this.db.getData(`/${id}/data`);
     }
 }
 exports.default = database;

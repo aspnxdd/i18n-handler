@@ -41,74 +41,73 @@ function createWindow() {
     }
     // Open the DevTools.
     // window.webContents.openDevTools();
-    console.log("app rdy");
-    electron_1.ipcMain.handle("getTheme", () => {
-        console.log("getTheme");
-        const theme = store.get("theme");
-        if (typeof theme == "string")
-            return (theme || "light");
-        return "light";
+    console.log('app rdy');
+    electron_1.ipcMain.handle('getTheme', () => {
+        console.log('getTheme');
+        const theme = store.get('theme');
+        if (typeof theme == 'string')
+            return theme || 'light';
+        return 'light';
     });
-    electron_1.ipcMain.handle("setTheme", (_, arg) => {
+    electron_1.ipcMain.handle('setTheme', (_, arg) => {
         if (!arg)
             return false;
-        console.log("setTheme", arg);
-        store.delete("theme");
-        store.set("theme", arg);
+        console.log('setTheme', arg);
+        store.delete('theme');
+        store.set('theme', arg);
         return true;
     });
-    electron_1.ipcMain.handle("getAutoFormatDot", (_, __) => {
-        const autoFormatDot = store.get("autoFormatDot");
-        console.log("autoFormatDot", autoFormatDot);
-        return (autoFormatDot || false);
+    electron_1.ipcMain.handle('getAutoFormatDot', (_, __) => {
+        const autoFormatDot = store.get('autoFormatDot');
+        console.log('autoFormatDot', autoFormatDot);
+        return autoFormatDot || false;
     });
-    electron_1.ipcMain.handle("deleteOneProject", (_, id) => {
+    electron_1.ipcMain.handle('deleteOneProject', (_, id) => {
         db.deleteOneProject(id);
         return true;
     });
-    electron_1.ipcMain.handle("setAutoFormatDot", (_, arg) => {
-        console.log("x", arg);
-        store.delete("autoFormatDot");
-        store.set("autoFormatDot", arg);
-        console.log("check", store.get("autoFormatDot"));
+    electron_1.ipcMain.handle('setAutoFormatDot', (_, arg) => {
+        console.log('x', arg);
+        store.delete('autoFormatDot');
+        store.set('autoFormatDot', arg);
+        console.log('check', store.get('autoFormatDot'));
         return true;
     });
-    electron_1.ipcMain.handle("updateContent", (_, arg) => {
+    electron_1.ipcMain.handle('updateContent', (_, arg) => {
         const { id, key, val, prevKey } = arg;
-        console.log("u", id, key, val, prevKey);
+        console.log('u', id, key, val, prevKey);
         // console.log("data", data);
         db.updateContent(id, key, val, prevKey);
         return true;
     });
-    electron_1.ipcMain.handle("deleteEntry", (_, arg) => {
+    electron_1.ipcMain.handle('deleteEntry', (_, arg) => {
         const { id, key } = arg;
         db.deleteEntry(id, key);
         return true;
     });
-    electron_1.ipcMain.handle("save", async (_, arg) => {
-        try {
-            const { id, data } = arg;
-            console.log("id", id);
-            console.log("data", data);
-            await db.add(id, data);
-            return true;
-        }
-        catch (err) {
-            return err;
-        }
+    electron_1.ipcMain.handle('save', (_, arg) => {
+        const { id, data, lang } = arg;
+        console.log("null$", typeof lang, lang);
+        return db.add(id, data, lang);
     });
-    electron_1.ipcMain.handle("newproject", (_, arg) => {
+    electron_1.ipcMain.handle('newProject', (_, arg) => {
         db.newProject(arg);
         return true;
     });
-    electron_1.ipcMain.handle("getProjects", (__, _) => {
-        const projects = db.getProjects();
-        return projects;
+    electron_1.ipcMain.handle('getProjects', (__, _) => {
+        return db.getProjects();
     });
-    electron_1.ipcMain.handle("getOneProject", (_, id) => {
-        const data = db.getRes(id);
-        console.log(id, data);
-        return data;
+    electron_1.ipcMain.handle('getLangs', (_, id) => {
+        return db.getLangs(id);
+    });
+    electron_1.ipcMain.handle('exportProject', (_, id) => {
+        return db.exportProject(id);
+    });
+    electron_1.ipcMain.handle('getOneProject', (_, id, anotherLang) => {
+        if (anotherLang) {
+            return db.getRes(id, anotherLang);
+        }
+        return db.getRes(id);
     });
     window.webContents.openDevTools();
     // }

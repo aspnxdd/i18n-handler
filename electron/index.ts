@@ -3,8 +3,8 @@ import { join } from 'path';
 // const path = require("path");
 // const join = path.join;
 
-import database from "./db";
-import Store from "electron-store";
+import database from './db';
+import Store from 'electron-store';
 
 // Packages
 import { BrowserWindow, app, ipcMain } from 'electron';
@@ -42,89 +42,89 @@ function createWindow() {
   }
   // Open the DevTools.
   // window.webContents.openDevTools();
-  console.log("app rdy")
+  console.log('app rdy');
 
-  ipcMain.handle("getTheme", () => {
-    console.log("getTheme")
-    const theme = store.get("theme");
-    if (typeof theme == "string") return(theme || "light");
-    return "light";
+  ipcMain.handle('getTheme', () => {
+    console.log('getTheme');
+    const theme = store.get('theme');
+    if (typeof theme == 'string') return theme || 'light';
+    return 'light';
   });
 
-  ipcMain.handle("setTheme", (_, arg) => {
+  ipcMain.handle('setTheme', (_, arg) => {
     if (!arg) return false;
-    console.log("setTheme", arg);
-    store.delete("theme");
+    console.log('setTheme', arg);
+    store.delete('theme');
 
-    store.set("theme", arg);
+    store.set('theme', arg);
     return true;
   });
 
-  ipcMain.handle("getAutoFormatDot", (_, __) => {
-    const autoFormatDot = store.get("autoFormatDot");
-    console.log("autoFormatDot",autoFormatDot)
-    return ( autoFormatDot || false);
+  ipcMain.handle('getAutoFormatDot', (_, __) => {
+    const autoFormatDot = store.get('autoFormatDot');
+    console.log('autoFormatDot', autoFormatDot);
+    return autoFormatDot || false;
   });
 
-  ipcMain.handle("deleteOneProject", (_, id) => {
+  ipcMain.handle('deleteOneProject', (_, id) => {
     db.deleteOneProject(id);
-    
+
     return true;
   });
 
-  ipcMain.handle("setAutoFormatDot", (_, arg) => {
-    
-    console.log("x",arg)
-    store.delete("autoFormatDot");
+  ipcMain.handle('setAutoFormatDot', (_, arg) => {
+    console.log('x', arg);
+    store.delete('autoFormatDot');
 
-    store.set("autoFormatDot", arg);
-    console.log("check",store.get("autoFormatDot"))
+    store.set('autoFormatDot', arg);
+    console.log('check', store.get('autoFormatDot'));
     return true;
   });
 
-  ipcMain.handle("updateContent", (_, arg) => {
+  ipcMain.handle('updateContent', (_, arg) => {
     const { id, key, val, prevKey } = arg;
-    console.log("u", id, key, val, prevKey);
+    console.log('u', id, key, val, prevKey);
     // console.log("data", data);
     db.updateContent(id, key, val, prevKey);
     return true;
   });
 
-  ipcMain.handle("deleteEntry", (_, arg) => {
+  ipcMain.handle('deleteEntry', (_, arg) => {
     const { id, key } = arg;
-   
-    
+
     db.deleteEntry(id, key);
-    
+
     return true;
   });
 
-  ipcMain.handle("save", async (_, arg) => {
-    try {
-      const { id, data } = arg;
-      console.log("id", id);
-      console.log("data", data);
-      await db.add(id, data);
-      return true;
-    } catch (err) {
-      return err;
-    }
+  ipcMain.handle('save', (_, arg) => {
+    const { id, data, lang }: { id: string; data: Object; lang: string | null } = arg;
+    console.log("null$", typeof lang, lang);
+    return db.add(id, data, lang);
   });
 
-  ipcMain.handle("newproject", (_, arg) => {
+  ipcMain.handle('newProject', (_, arg) => {
     db.newProject(arg);
     return true;
   });
 
-  ipcMain.handle("getProjects", (__, _) => {
-    const projects = db.getProjects();
-    return projects;
+  ipcMain.handle('getProjects', (__, _) => {
+    return db.getProjects();
   });
 
-  ipcMain.handle("getOneProject", (_, id) => {
-    const data = db.getRes(id);
-    console.log(id, data);
-    return data;
+  ipcMain.handle('getLangs', (_, id) => {
+    return db.getLangs(id);
+  });
+
+  ipcMain.handle('exportProject', (_, id) => {
+    return db.exportProject(id);
+  });
+
+  ipcMain.handle('getOneProject', (_, id, anotherLang) => {
+    if (anotherLang) {
+      return db.getRes(id, anotherLang);
+    }
+    return db.getRes(id);
   });
 
   window.webContents.openDevTools();

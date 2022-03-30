@@ -68,6 +68,7 @@ export const GridStyled = styled.div`
   & > i {
     align-items: center;
     justify-content: center;
+    font-style: normal;
     display: flex;
     align-content: center;
     cursor: pointer;

@@ -1,28 +1,37 @@
-import React, {  useEffect, useState } from "react";
-import { FormStyled, SpanStyled } from "./FormStyles";
-import { Formik, Form, Field, useFormikContext, FormikValues } from "formik";
-import { submittingState } from "../states";
-import { useRecoilState } from "recoil";
+import React, { useEffect, useState } from 'react';
+import { FormStyled, SpanStyled } from './FormStyles';
+import { Formik, Form, Field, useFormikContext, FormikValues } from 'formik';
+import { submittingState } from '../states';
+import { useRecoilState } from 'recoil';
 
-import ReactTooltip from "react-tooltip";
+import ReactTooltip from 'react-tooltip';
 
-
-export default function FormComp({ project }: {project:string}) {
-  const initialValues: {key: string;  val: string;} = { key: "", val: "" };
+export default function FormComp({
+  project,
+  langs,
+  setLang,
+  lang
+}: {
+  project: string;
+  lang: string | null;
+  langs: string[];
+  setLang: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
+  const initialValues: { key: string; val: string } = { key: '', val: '' };
 
   const [_, setSending] = useRecoilState(submittingState);
   const [checked, setChecked] = useState<boolean | null>(null);
 
   const stringWithDots = (e: string) => {
-    const splittedString = e.split(" ");
-    return splittedString.join(".");
+    const splittedString = e.split(' ');
+    return splittedString.join('.');
   };
 
   const AutoSubmitToken = () => {
     const { values } = useFormikContext<FormikValues>();
     useEffect(() => {
-      window.addEventListener("keydown", (event) => {
-        if (event.key == "Tab" && checked) {
+      window.addEventListener('keydown', (event) => {
+        if (event.key == 'Tab' && checked) {
           return (values.key = stringWithDots(values.key));
         }
       });
@@ -31,15 +40,14 @@ export default function FormComp({ project }: {project:string}) {
   };
 
   useEffect(() => {
-    if (checked != null) window.Main.send("setAutoFormatDot", checked);
+    if (checked != null) window.Main.send('setAutoFormatDot', checked);
   }, [checked]);
 
   useEffect(() => {
-    window.Main.invoke("getAutoFormatDot").then((arg)=>{
-      console.log("storedAutoFormatDot", arg);
+    window.Main.invoke('getAutoFormatDot').then((arg) => {
+      console.log('storedAutoFormatDot', arg);
       setChecked(arg);
     });
-    
   }, []);
 
   return (
@@ -57,37 +65,43 @@ export default function FormComp({ project }: {project:string}) {
       </span>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, actions): void => {
+        onSubmit={(values, actions) => {
           setSending(true);
           const { key, val } = values;
           const obj = Object.fromEntries([[key, val]]);
-          window.Main.invoke("save", { data: obj, id: project }).then((arg)=>{
-            actions.setSubmitting(false);
-            if (arg == "error") alert("key already exists");
-            setSending(false);
+          console.log("$$null", typeof lang, lang);
+          window.Main.invoke('save', { data: obj, id: project, lang: lang }).then((res) => {
+            if (res) {
+              actions.setSubmitting(false);
+              setSending(false);
+            } else {
+              alert('This key already exists');
+            }
           });
-          
         }}
       >
         <Form>
           <SpanStyled>
-
-          <div>
-            <span>
-              <label htmlFor="key">Key</label>
-              <Field id="key" name="key" placeholder="key" type="text" />
-            </span>
-            <span>
-              <label htmlFor="val">Val</label>
-              <Field id="val" name="val" placeholder="val" />
-            </span>
-          </div>
-          <button type="submit">Add</button>
-          {/* {sending && <div>Sending</div>} */}
-          <AutoSubmitToken />
+            <div>
+              <span>
+                <label htmlFor="key">Key</label>
+                <Field id="key" name="key" placeholder="key" type="text" />
+              </span>
+              <span>
+                <label htmlFor="val">Val</label>
+                <Field id="val" name="val" placeholder="val" />
+              </span>
+            </div>
+            <button type="submit">Add</button>
+            <AutoSubmitToken />
           </SpanStyled>
         </Form>
       </Formik>
+      {langs.map((lang) => (
+        <div key={lang} onClick={() => setLang(lang)}>
+          {lang}
+        </div>
+      ))}
     </FormStyled>
   );
 }

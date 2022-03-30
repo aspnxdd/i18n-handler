@@ -6,6 +6,14 @@ export const FormStyled = styled.div`
     width: fit-content;
     text-decoration: underline dotted gray;
   }
+  & > div {
+    display: inline;
+    margin-left:1rem;
+    cursor:pointer;
+    &:hover {
+      color:#7871d7;
+    }
+  }
 `;
 
 export const SpanStyled = styled.span`
