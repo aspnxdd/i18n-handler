@@ -37,6 +37,12 @@
     "electron-store": "^8.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "formik": "^2.2.9",
+    "node-json-db": "^1.4.1",
+    "react-multi-split-pane": "^0.3.2",
+    "react-tooltip": "^4.2.21",
+    "recoil": "^0.5.2",
+    "styled-components": "^5.3.3",
     "vite": "^2.8.6"
   },
   "devDependencies": {

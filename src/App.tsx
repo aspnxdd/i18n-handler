@@ -8,14 +8,16 @@ import { lightTheme, darkTheme, GlobalStyles } from './components/layout/themes'
 import { SplitPane } from 'react-multi-split-pane';
 
 function App() {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState<null | string>(null);
 
 
   useEffect(() => {
-    window.Main.invoke('setTheme', theme);
+    window.Main.invoke('setTheme', theme).then((res)=>{
+    });
   }, [theme]);
 
   useEffect(() => {
+    if(!theme)
     window.Main.invoke('getTheme').then((res:string) => {
       if (res) setTheme(res);
     });

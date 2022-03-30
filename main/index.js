@@ -44,17 +44,14 @@ function createWindow() {
     console.log('app rdy');
     electron_1.ipcMain.handle('getTheme', () => {
         console.log('getTheme');
-        const theme = store.get('theme');
-        if (typeof theme == 'string')
-            return theme || 'light';
-        return 'light';
+        const theme = store.get('i18nTheme', "dark");
+        return theme;
     });
     electron_1.ipcMain.handle('setTheme', (_, arg) => {
         if (!arg)
             return false;
-        console.log('setTheme', arg);
-        store.delete('theme');
-        store.set('theme', arg);
+        console.log('setTheme $ ', arg, typeof arg);
+        store.set('i18nTheme', arg);
         return true;
     });
     electron_1.ipcMain.handle('getAutoFormatDot', (_, __) => {
@@ -91,7 +88,8 @@ function createWindow() {
         return db.add(id, data, lang);
     });
     electron_1.ipcMain.handle('newProject', (_, arg) => {
-        db.newProject(arg);
+        const { data } = arg;
+        db.newProject(data);
         return true;
     });
     electron_1.ipcMain.handle('getProjects', (__, _) => {

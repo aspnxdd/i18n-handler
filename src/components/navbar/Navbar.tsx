@@ -1,26 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { projectState, submittingState } from "../states";
-import { useRecoilState } from "recoil";
-import { Modal } from "../modal/Modal";
-import { IconRefresh, IconCirclePlus, IconMoon, IconSun } from "@tabler/icons";
-import { IUseState } from "../../interfaces";
-import { NavbarStyled, ProjectList } from "./NavbarStyles";
+import React, { useState, useEffect } from 'react';
+import { projectState, submittingState } from '../states';
+import { useRecoilState } from 'recoil';
+import { Modal } from '../modal/Modal';
+import { IconRefresh, IconCirclePlus, IconMoon, IconSun } from '@tabler/icons';
+import { IUseState } from '../../interfaces';
+import { NavbarStyled, ProjectList } from './NavbarStyles';
 
-export default function Navbar({
-  state: theme,
-  setState: setTheme,
-}: IUseState<string>) {
+export default function Navbar({ state: theme, setState: setTheme }: IUseState<string | null>) {
   const [projects, setProjects] = useState<Array<string>>(new Array());
   const [, setProject] = useRecoilState(projectState);
   const [sending] = useRecoilState(submittingState);
   const [showModal, setShowModal] = useState(false);
 
   function getProjects() {
-    window.Main.invoke("getProjects").then((arg)=>{
+    window.Main.invoke('getProjects').then((arg) => {
       setProjects(arg);
     });
-   
-
   }
 
   useEffect(() => {
@@ -44,7 +39,7 @@ export default function Navbar({
       </i>
       <ProjectList>
         <h4>
-          <b> Projects </b>{" "}
+          <b> Projects </b>{' '}
         </h4>
         {projects.map((project, i) => {
           return (
@@ -58,8 +53,8 @@ export default function Navbar({
         <IconCirclePlus onClick={() => openModal()} />
       </i>
       <i>
-        {theme == "light" && <IconMoon onClick={() => setTheme("dark")} />}
-        {theme == "dark" && <IconSun onClick={() => setTheme("light")} />}
+        {theme == 'light' && <IconMoon onClick={() => setTheme('dark')} />}
+        {theme == 'dark' && <IconSun onClick={() => setTheme('light')} />}
       </i>
     </NavbarStyled>
   );

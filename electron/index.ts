@@ -45,18 +45,14 @@ function createWindow() {
   console.log('app rdy');
 
   ipcMain.handle('getTheme', () => {
-    console.log('getTheme');
-    const theme = store.get('theme');
-    if (typeof theme == 'string') return theme || 'light';
-    return 'light';
+    const theme = store.get('i18nTheme', 'dark');
+    return theme;
   });
 
   ipcMain.handle('setTheme', (_, arg) => {
     if (!arg) return false;
-    console.log('setTheme', arg);
-    store.delete('theme');
 
-    store.set('theme', arg);
+    store.set('i18nTheme', arg);
     return true;
   });
 
@@ -99,12 +95,13 @@ function createWindow() {
 
   ipcMain.handle('save', (_, arg) => {
     const { id, data, lang }: { id: string; data: Object; lang: string | null } = arg;
-    console.log("null$", typeof lang, lang);
+    console.log('null$', typeof lang, lang);
     return db.add(id, data, lang);
   });
 
   ipcMain.handle('newProject', (_, arg) => {
-    db.newProject(arg);
+    const { data } = arg;
+    db.newProject(data);
     return true;
   });
 
