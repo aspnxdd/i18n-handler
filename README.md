@@ -16,7 +16,7 @@
 Create an executable:
 
 ```bash
-npm run make
+npm run dist
 ```
 Then the .exe will be located in ~\i18n-spin-ts\out\i18n-spints-win32-x64\i18n-spints.exe
 
