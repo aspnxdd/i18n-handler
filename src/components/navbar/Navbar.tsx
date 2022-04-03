@@ -17,7 +17,7 @@ export default function Navbar({ state: theme, setState: setTheme }: IUseState<s
       setProjects(arg);
     });
   }
-
+ 
   useEffect(() => {
     getProjects();
   }, []);
@@ -53,8 +53,8 @@ export default function Navbar({ state: theme, setState: setTheme }: IUseState<s
         <IconCirclePlus onClick={() => openModal()} />
       </i>
       <i>
-        {theme == 'light' && <IconMoon onClick={() => setTheme('dark')} />}
-        {theme == 'dark' && <IconSun onClick={() => setTheme('light')} />}
+        {theme === 'light' && <IconMoon onClick={() => setTheme('dark')} />}
+        {theme === 'dark' && <IconSun onClick={() => setTheme('light')} />}
       </i>
     </NavbarStyled>
   );

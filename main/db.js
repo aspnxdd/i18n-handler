@@ -10,12 +10,11 @@ class database {
     }
     add(id, data, lang) {
         const mainLang = this.db.getData(`/${id}/mainLang`);
-        console.log("null", typeof lang, lang);
+        console.log('null', typeof lang, lang);
         const currentData = typeof lang == 'string' ? this.db.getData(`/${id}/data/${lang}`) : this.db.getData(`/${id}/data/${mainLang}`);
         const key = Object.keys(data)[0];
         const value = Object.values(data);
         if (currentData[key]) {
-            console.log('currentData[key]', currentData[key]);
             return false;
         }
         else {
@@ -26,20 +25,20 @@ class database {
             return true;
         }
     }
-    updateContent(id, key, val, prevKey) {
-        const mainLang = this.db.getData(`/${id}/mainLang`);
-        const currentData = this.db.getData(`/${id}/data/${mainLang}`);
+    updateContent(id, key, val, prevKey, anotherLang) {
+        const lang = anotherLang ?? this.getMainLang(id);
+        const currentData = this.db.getData(`/${id}/data/${lang}`);
         delete currentData[prevKey];
         currentData[key] = val;
-        this.db.push(`/${id}/data/${mainLang}`, {
+        this.db.push(`/${id}/data/${lang}`, {
             ...currentData
         }, true);
     }
-    deleteEntry(id, key) {
-        const mainLang = this.db.getData(`/${id}/mainLang`);
-        const currentData = this.db.getData(`/${id}/data/${mainLang}`);
+    deleteEntry(id, key, anotherLang) {
+        const lang = anotherLang ?? this.getMainLang(id);
+        const currentData = this.db.getData(`/${id}/data/${lang}`);
         delete currentData[key];
-        this.db.push(`/${id}/data/${mainLang}`, {
+        this.db.push(`/${id}/data/${lang}`, {
             ...currentData
         }, true);
     }
@@ -68,16 +67,11 @@ class database {
     getLangs(id) {
         const data = this.db.getData(`/${id}/data`);
         const langs = Object.keys(data);
-        // const langKeys = langs.map((lang)=>{
-        //   return Object.keys(languages).find((e )=> languages[e as langKeys]===lang);
-        // })
         return langs;
     }
     getRes(id, anotherLang) {
-        if (anotherLang) {
-            return this.db.getData(`/${id}/data/${anotherLang}`);
-        }
-        return this.db.getData(`/${id}/data/${this.getMainLang(id)}`);
+        const lang = anotherLang ?? this.getMainLang(id);
+        return this.db.getData(`/${id}/data/${lang}`);
     }
     exportProject(id) {
         return this.db.getData(`/${id}/data`);

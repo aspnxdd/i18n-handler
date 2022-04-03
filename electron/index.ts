@@ -77,30 +77,24 @@ function createWindow() {
     return true;
   });
 
-  ipcMain.handle('updateContent', (_, arg) => {
-    const { id, key, val, prevKey } = arg;
-    console.log('u', id, key, val, prevKey);
-    // console.log("data", data);
-    db.updateContent(id, key, val, prevKey);
+  ipcMain.handle('updateContent', (_, {id, key, val, prevKey, anotherLang}) => {
+    db.updateContent(id, key, val, prevKey, anotherLang);
     return true;
   });
 
-  ipcMain.handle('deleteEntry', (_, arg) => {
-    const { id, key } = arg;
+  ipcMain.handle('deleteEntry', (_,  { id, key, anotherLang } ) => {
 
-    db.deleteEntry(id, key);
+    db.deleteEntry(id, key, anotherLang);
 
     return true;
   });
 
   ipcMain.handle('save', (_, arg) => {
     const { id, data, lang }: { id: string; data: Object; lang: string | null } = arg;
-    console.log('null$', typeof lang, lang);
     return db.add(id, data, lang);
   });
 
-  ipcMain.handle('newProject', (_, arg) => {
-    const { data } = arg;
+  ipcMain.handle('newProject', (_, {data}) => {
     db.newProject(data);
     return true;
   });
@@ -117,11 +111,10 @@ function createWindow() {
     return db.exportProject(id);
   });
 
-  ipcMain.handle('getOneProject', (_, id, anotherLang) => {
-    if (anotherLang) {
-      return db.getRes(id, anotherLang);
-    }
-    return db.getRes(id);
+  ipcMain.handle('getOneProject', (_, {id, anotherLang}) => {
+ 
+    return db.getRes(id, anotherLang);
+   
   });
 
   window.webContents.openDevTools();

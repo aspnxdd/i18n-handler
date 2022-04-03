@@ -1,22 +1,19 @@
 {
-  "name": "vite-reactts-electron-starter",
+  "name": "i18n-handler",
   "version": "0.5.0",
   "license": "MIT",
   "main": "main/index.js",
   "author": {
-    "name": "Maximilian Stümpfl"
+    "name": "Arnau Espin"
   },
-  "description": "Starter using Vite 2+ React +Typescript + Electron for fast prototyping.",
   "keywords": [
     "vite",
     "react",
     "electron",
     "typescript"
   ],
-  "repository": {
-    "url": "https://github.com/lTimeless/vite-reactts-electron-starter"
-  },
-  "productName": "vite-reactts-electron-starter",
+
+  "productName": "i18n-handler",
   "scripts": {
     "dev": "concurrently \"yarn dev:vite\" \" yarn dev:electron\"",
     "dev:vite": "vite",

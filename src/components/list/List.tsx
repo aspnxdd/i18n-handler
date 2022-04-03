@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useReducer } from 'react';
 import { ListStyled, GridStyled, GridStyledHeader, Title } from './ListStyles';
 import FormComp from '../form/Form';
 import { IconDeviceFloppy, IconSquareX, IconTrash, IconFileExport } from '@tabler/icons';
@@ -6,30 +6,80 @@ import { projectState, submittingState } from '../states';
 import { useRecoilState } from 'recoil';
 import ReactTooltip from 'react-tooltip';
 
+
+type ActionType =
+  | { type: 'UPDATE'; prevKey: string; key: string; val: string | number }
+  | { type: 'DELETE'; key: string }
+  | { type: 'SET'; }
+  | { type: 'FETCH_SET'; s: string[][] };
+
 export default function List() {
   const [project] = useRecoilState(projectState);
   const [sending, setSending] = useRecoilState(submittingState);
-  const [projectData, setProjectData] = useState<Array<string[]>>([]);
   const [langs, setLangs] = useState<string[]>([]);
   const [lang, setLang] = useState<string | null>(null);
+  const [state, dispatch] = useReducer((state: string[][], action: ActionType) => {
+    switch (action.type) {
+      case 'SET':
+        window.Main.invoke('getOneProject', {id:project, anotherLang : lang ?? undefined}).then((arg: { string: string }) => {
+          dispatch({ type: 'FETCH_SET', s: [...Object.entries(arg)] });
+        });
+        return state;
+      case 'FETCH_SET':
+        return action.s;
+      case 'DELETE':
+        setSending(true);
 
-  const editedKey = useRef(new Array());
-  const editedVal = useRef(new Array());
+        window.Main.invoke('deleteEntry', { key: action.key, id: project, anotherLang: lang ?? undefined }).then(() => {
+          setSending(false);
+        });
+        return state as string[][];
+
+      case 'UPDATE':
+        setSending(true);
+
+        window.Main.invoke('updateContent', {
+          key: action.key,
+          val: action.val,
+          id: project,
+          prevKey: action.prevKey,
+          anotherLang:lang ?? undefined
+        }).then(() => {
+          setSending(false);
+        });
+        return state as string[][];
+      default:
+        throw new Error();
+    }
+  }, []);
+
+  const editedKey = useRef<HTMLInputElement[]>([]);
+  const editedVal = useRef<HTMLInputElement[]>([]);
 
   const updateContent = (prevKey: string, i: number) => {
-    setSending(true);
-    window.Main.invoke('updateContent', {
-      key: editedKey.current[i].textContent,
-      val: editedVal.current[i].textContent,
-      id: project,
-      prevKey: prevKey
-    }).then(() => setSending(false));
+    if (editedKey.current[i] && editedVal.current[i]) {
+      dispatch({
+        type: 'UPDATE',
+        key: editedKey.current[i].value,
+        val: editedVal.current[i].value,
+        
+        prevKey
+      });
+    }
   };
 
   const restoreContent = (prevKey: string, prevVal: string, i: number) => {
-    editedKey.current[i].textContent = prevKey;
-    editedVal.current[i].textContent = prevVal;
+    console.log("restoring")
+    editedKey.current[i].value = prevKey;
+    editedVal.current[i].value = prevVal;
   };
+
+  const deleteEntry = (key: string) => {
+    if (!window.confirm('Are you sure you want to delete this entry?')) return;
+
+    dispatch({ type: 'DELETE', key });
+
+  }
 
   const deleteProject = () => {
     if (project) {
@@ -43,7 +93,6 @@ export default function List() {
   const exportProject = () => {
     if (project) {
       setSending(true);
-
       window.Main.invoke('exportProject', project).then((data) => {
         for (const lang in data) {
           const fileName = lang;
@@ -62,27 +111,17 @@ export default function List() {
     }
   };
 
-  const deleteEntry = (key: string) => {
-    if (!window.confirm('Are you sure you want to delete this entry?')) return;
-    setSending(true);
-    window.Main.invoke('deleteEntry', { key: key, id: project }).then(() => setSending(false));
-  };
-
   useEffect(() => {
-    if (lang)
-      window.Main.invoke('getOneProject', project, lang).then((arg: { string: string }) => {
-        setProjectData([...Object.entries(arg)]);
-      });
+    if (lang) dispatch({ type: 'SET' });
+   
   }, [lang]);
 
   useEffect(() => {
     if (project) {
-      window.Main.invoke('getOneProject', project, lang).then((arg: { string: string }) => {
-        setProjectData([...Object.entries(arg)]);
-      });
       window.Main.invoke('getLangs', project).then((arg) => {
         setLangs(arg);
       });
+      dispatch({ type: 'SET' });
     }
   }, [project, sending]);
 
@@ -112,21 +151,31 @@ export default function List() {
 
           <GridStyledHeader>
             <span>Key</span>
-            <span>Val</span>
-            <span></span>
-            <span></span>
-            <span></span>
+            <span>Translation</span>
           </GridStyledHeader>
           <div className="listContent">
-            {projectData.map((data, i) => {
+            {state.map((data, i) => {
+              // console.log(1, data);
+              editedKey.current = [];
+              editedVal.current = [];
               return (
                 <GridStyled key={i}>
-                  <span ref={(e) => editedKey.current.push(e)} contentEditable>
-                    {data[0]}
-                  </span>{' '}
-                  <span ref={(e) => editedVal.current.push(e)} contentEditable>
-                    {data[1]}
-                  </span>
+                  <input
+                    type="text"
+                    defaultValue={data[0]}
+                    ref={(e) => {
+                      if (e) editedKey.current.push(e);
+                    }}
+                  />
+
+                  <input
+                    type="text"
+                    defaultValue={data[1]}
+                    ref={(e) => {
+                      if (e) editedVal.current.push(e);
+                    }}
+                  />
+
                   <i>
                     <span data-tip="Save">
                       <IconDeviceFloppy onClick={() => updateContent(data[0], i)} />

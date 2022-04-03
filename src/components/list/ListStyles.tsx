@@ -15,7 +15,7 @@ export const Title = styled.span`
     border-radius: 999px;
     
     &:hover {
-      color: #ea9799;
+      color: #6BF1C4;
     }
   }
 `;
@@ -44,18 +44,26 @@ export const GridStyled = styled.div`
   grid-gap: 1rem;
   justify-items: center;
   align-items: center;
-  background-color: #829fd7;
-  border-radius: 2rem;
-  & > span {
+  background-color: #191645;
+  border: 3px #5650B1 solid;
+  color:#fff;
+  border-radius: 1rem;
+  & > input {
     max-width: 10rem;
     overflow: hidden;
+  color:#fff;
+
+    background-color: inherit;
     text-overflow: ellipsis;
     white-space: nowrap;
     outline: none;
+    border:0;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+    margin-left:2rem;
     &:first-child {
       padding-left: 1rem;
+
     }
     . &:focus {
       max-width: 10rem;
@@ -80,7 +88,7 @@ export const GridStyled = styled.div`
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
     &:hover {
-      color: ${(e) => e.theme.body};
+      color: ${(e) => e.theme.focusColor};
     }
   }
 `;
@@ -92,10 +100,16 @@ export const GridStyledHeader = styled.div`
   display: grid;
   grid-template-columns: 10rem 10rem 2rem 2rem 2rem 1rem;
   grid-gap: 1rem;
+  color:#fff;
+
   justify-items: center;
   align-items: center;
   border-radius: 12rem;
-  background-color: #3946b9;
+  height:2.5rem;
+  border: 3px #5650B1 solid;
+  font-weight: bold;
+  background-color: rgba(130,71,229);
+  background-color: #191645;
   & > span {
     padding: 0.3rem;
     padding-left: 2rem;

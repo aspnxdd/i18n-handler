@@ -13,9 +13,6 @@ export const NavbarStyled = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-
-  
-
   & > i {
     margin-top: 2rem;
     margin-bottom: 1rem;
@@ -49,7 +46,7 @@ export const ProjectList = styled.div`
   background-color: #575757;
   padding-top: 1rem;
   padding-bottom: 1rem;
-
+  
   & > button {
     color: black;
     cursor: pointer;
@@ -67,6 +64,7 @@ export const ProjectList = styled.div`
     }
 
     span {
+      width:100%;
       margin-left: 1rem;
     }
   }

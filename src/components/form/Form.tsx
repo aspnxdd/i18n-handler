@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { FormStyled, SpanStyled } from './FormStyles';
-import { Formik, Form, Field, useFormikContext, FormikValues } from 'formik';
+import { FormStyled, SpanStyled, FieldStyled } from './FormStyles';
+import { Formik, Form, useFormikContext, FormikValues } from 'formik';
 import { submittingState } from '../states';
 import { useRecoilState } from 'recoil';
 
@@ -69,14 +69,13 @@ export default function FormComp({
           setSending(true);
           const { key, val } = values;
           const obj = Object.fromEntries([[key, val]]);
-          console.log("$$null", typeof lang, lang);
           window.Main.invoke('save', { data: obj, id: project, lang: lang }).then((res) => {
             if (res) {
               actions.setSubmitting(false);
-              setSending(false);
             } else {
               alert('This key already exists');
             }
+            setSending(false);
           });
         }}
       >
@@ -85,11 +84,11 @@ export default function FormComp({
             <div>
               <span>
                 <label htmlFor="key">Key</label>
-                <Field id="key" name="key" placeholder="key" type="text" />
+                <FieldStyled id="key" name="key" placeholder="key" type="text" />
               </span>
               <span>
                 <label htmlFor="val">Val</label>
-                <Field id="val" name="val" placeholder="val" />
+                <FieldStyled id="val" name="val" placeholder="val" />
               </span>
             </div>
             <button type="submit">Add</button>

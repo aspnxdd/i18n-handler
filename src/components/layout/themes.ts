@@ -11,7 +11,8 @@ export const lightTheme = {
   searchBorder: '#6e6e6e',
   searchResults: '#fff',
   timeBtnBorder: '#fff',
-  timeBtnBackground: '#fff'
+  timeBtnBackground: '#fff',
+  focusColor: "#43C6AC"
 };
 
 export const darkTheme = {
@@ -27,7 +28,8 @@ export const darkTheme = {
   searchBorder: '#233547',
   searchResults: '#406182',
   timeBtnBorder: '#000',
-  timeBtnBackground: '#15202b'
+  timeBtnBackground: '#15202b',
+  focusColor: "#43C6AC"
 };
 
 export const GlobalStyles = createGlobalStyle`

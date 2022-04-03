@@ -43,14 +43,12 @@ function createWindow() {
     // window.webContents.openDevTools();
     console.log('app rdy');
     electron_1.ipcMain.handle('getTheme', () => {
-        console.log('getTheme');
-        const theme = store.get('i18nTheme', "dark");
+        const theme = store.get('i18nTheme', 'dark');
         return theme;
     });
     electron_1.ipcMain.handle('setTheme', (_, arg) => {
         if (!arg)
             return false;
-        console.log('setTheme $ ', arg, typeof arg);
         store.set('i18nTheme', arg);
         return true;
     });
@@ -70,25 +68,19 @@ function createWindow() {
         console.log('check', store.get('autoFormatDot'));
         return true;
     });
-    electron_1.ipcMain.handle('updateContent', (_, arg) => {
-        const { id, key, val, prevKey } = arg;
-        console.log('u', id, key, val, prevKey);
-        // console.log("data", data);
-        db.updateContent(id, key, val, prevKey);
+    electron_1.ipcMain.handle('updateContent', (_, { id, key, val, prevKey, anotherLang }) => {
+        db.updateContent(id, key, val, prevKey, anotherLang);
         return true;
     });
-    electron_1.ipcMain.handle('deleteEntry', (_, arg) => {
-        const { id, key } = arg;
-        db.deleteEntry(id, key);
+    electron_1.ipcMain.handle('deleteEntry', (_, { id, key, anotherLang }) => {
+        db.deleteEntry(id, key, anotherLang);
         return true;
     });
     electron_1.ipcMain.handle('save', (_, arg) => {
         const { id, data, lang } = arg;
-        console.log("null$", typeof lang, lang);
         return db.add(id, data, lang);
     });
-    electron_1.ipcMain.handle('newProject', (_, arg) => {
-        const { data } = arg;
+    electron_1.ipcMain.handle('newProject', (_, { data }) => {
         db.newProject(data);
         return true;
     });
@@ -101,11 +93,8 @@ function createWindow() {
     electron_1.ipcMain.handle('exportProject', (_, id) => {
         return db.exportProject(id);
     });
-    electron_1.ipcMain.handle('getOneProject', (_, id, anotherLang) => {
-        if (anotherLang) {
-            return db.getRes(id, anotherLang);
-        }
-        return db.getRes(id);
+    electron_1.ipcMain.handle('getOneProject', (_, { id, anotherLang }) => {
+        return db.getRes(id, anotherLang);
     });
     window.webContents.openDevTools();
     // }
