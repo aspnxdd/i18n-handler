@@ -51,8 +51,7 @@ export const GridStyled = styled.div`
   & > input {
     max-width: 10rem;
     overflow: hidden;
-  color:#fff;
-
+    color:#fff;
     background-color: inherit;
     text-overflow: ellipsis;
     white-space: nowrap;

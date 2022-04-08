@@ -10,12 +10,4 @@ export const submittingState = atom({
   default: false,
 });
 
-// export const autoFormatToDotState = atom({
-//   key: "autoFormatToDot",
-//   default: null || false,
-// });
 
-// export const darkTheme = atom({
-//   key: "submitting",
-//   default: false,
-// });

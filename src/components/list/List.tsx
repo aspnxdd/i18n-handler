@@ -18,6 +18,7 @@ export default function List() {
   const [sending, setSending] = useRecoilState(submittingState);
   const [langs, setLangs] = useState<string[]>([]);
   const [lang, setLang] = useState<string | null>(null);
+  
   const [state, dispatch] = useReducer((state: string[][], action: ActionType) => {
     switch (action.type) {
       case 'SET':
